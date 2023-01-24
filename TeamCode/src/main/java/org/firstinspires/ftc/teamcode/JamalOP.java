@@ -223,8 +223,6 @@ public class JamalOP extends OpMode
 
     }
 
-
-
     /*
      * Code to run ONCE after the driver hits STOP
      */
