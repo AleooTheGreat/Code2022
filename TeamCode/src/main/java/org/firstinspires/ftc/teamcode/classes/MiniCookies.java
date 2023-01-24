@@ -33,23 +33,32 @@ public class MiniCookies {
         iohann.setPosition(1);
     }
 
+    public void open(){
+        lilpimp.setPosition(0.1);
+    }
+
+    public void close(){
+        lilpimp.setPosition(0);
+    }
+
     public void up(){
         sl.setPosition(0.66);
         sr.setPosition(0.66);
     }
 
+    public void nohitup(){
+        sl.setPosition(0.56);
+        sr.setPosition(0.56);
+    }
+
     public void miniup(){
-        sl.setPosition(0.15);
-        sr.setPosition(0.15);
+        sl.setPosition(0.08);
+        sr.setPosition(0.08);
     }
     public void down(){
         sl.setPosition(0);
         sr.setPosition(0);
     }
 
-    public void minidown(){
-        sl.setPosition(0.5);
-        sr.setPosition(0.5);
-    }
 
 }

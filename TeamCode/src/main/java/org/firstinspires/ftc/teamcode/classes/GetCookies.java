@@ -82,9 +82,18 @@ public class GetCookies {
 
     public void down(){
 
+        minicookies.close();
+
         setpoint = 0;
+
         if(gl.getCurrentPosition() < 40 && gr.getCurrentPosition() < 40){
             minicookies.down();
+            try {
+                wait(250);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            minicookies.open();
         }
 
     }

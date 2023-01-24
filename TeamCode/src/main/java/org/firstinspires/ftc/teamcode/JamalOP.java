@@ -30,6 +30,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static android.os.SystemClock.sleep;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -62,6 +64,7 @@ public class JamalOP extends OpMode
     boolean ChangeSpeed = false;
 
     boolean LowJ = false, MidJ = false, HighJ = false;
+    boolean fail = false;
 
     double speedM = 1f;
 
@@ -155,23 +158,37 @@ public class JamalOP extends OpMode
 
         //Gamepad2
 
+
+        //Glisiere
         if(gamepad2.dpad_up && !HighJ) {
+
             lift.up(2);
+            minicookies.up();
+
             HighJ = true;
 
+
         } else if(gamepad2.dpad_up && HighJ) {
+
              lift.down();
+
              HighJ = false;
 
         }
 
         if(gamepad2.dpad_left && !MidJ){
+
             lift.up(1);
+            minicookies.up();
+
             MidJ = true;
 
         } else if(gamepad2.dpad_left){
+
             lift.down();
+
             MidJ = false;
+
         }
 
 
@@ -179,41 +196,84 @@ public class JamalOP extends OpMode
 
             minicookies.up();
 
-
             LowJ = true;
 
         }else if(gamepad2.dpad_down && LowJ){
 
+            minicookies.close();
+
             minicookies.down();
 
+            try {
+                wait(250);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            minicookies.open();
 
             LowJ = false;
+
         }
 
 
+        //brat carbon
         if(gamepad2.square){
-            minicookies.sr.setPosition(0.66);
-            minicookies.sl.setPosition(0.66);
+
+            minicookies.up();
+
         }
         if(gamepad2.circle){
-            minicookies.sr.setPosition(0);
-            minicookies.sl.setPosition(0);
+
+            minicookies.down();
+
         }
+
+        //cleste
+        if(gamepad2.left_bumper){
+
+           minicookies.open();
+
+           if(HighJ || MidJ) {
+
+               try {
+                   wait(250);
+               } catch (InterruptedException e) {
+                   throw new RuntimeException(e);
+               }
+
+               minicookies.nohitup();
+
+           }else if(fail && !LowJ){
+
+               minicookies.down();
+
+            }
+
+            fail = false;
+
+        }
+
 
         if(gamepad2.right_bumper){
-           minicookies.lilpimp.setPosition(0.1);
-           if(HighJ || MidJ || LowJ) {
-               minicookies.miniup();
-           }
-        }
-        if(gamepad2.left_bumper){
-            minicookies.lilpimp.setPosition(0);
+
+            minicookies.close();
+
             if(!HighJ||!MidJ||!LowJ){
+                try {
+                    wait(250);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 minicookies.miniup();
+
+                fail = true;
+
             }
-            minicookies.minidown();
         }
 
+        //telemetry verificare
         telemetry.addData("position", GetCookies.setpoint);
         telemetry.addData("gl_pos", lift.gl.getCurrentPosition());
         telemetry.addData("gr_pos", lift.gr.getCurrentPosition());
