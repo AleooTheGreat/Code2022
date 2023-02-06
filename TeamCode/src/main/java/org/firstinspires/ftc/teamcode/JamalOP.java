@@ -35,15 +35,18 @@ import static android.os.SystemClock.sleep;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.firstinspires.ftc.teamcode.classes.Cookie;
 import org.firstinspires.ftc.teamcode.classes.GetCookies;
 import org.firstinspires.ftc.teamcode.classes.MiniCookies;
+
 
 
 @TeleOp(name="JamalOp", group="Iterative Opmode")
@@ -56,26 +59,18 @@ public class JamalOP extends OpMode
     MiniCookies minicookies = new MiniCookies();
     GetCookies lift = new GetCookies();
 
-
-
     ElapsedTime runtime = new ElapsedTime();
-    ElapsedTime timer = new ElapsedTime();
 
-    boolean ChangeSpeed = false;
 
-    boolean LowJ = false, MidJ = false, HighJ = false;
+    boolean auto = false;
+    boolean open = false;
+    double brat = 0;
+
+    boolean noupstate = false, sus = false;
     boolean fail = false;
 
-    double speedM = 1f;
+    double speedM = 0.8f;
 
-
-
-
-    ElapsedTime ServoRunTime = new ElapsedTime();
-
-    //Dashboard
-    FtcDashboard dashboard = FtcDashboard.getInstance();
-    Telemetry tel = dashboard.getTelemetry();
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -83,7 +78,7 @@ public class JamalOP extends OpMode
     @Override
     public void init() {
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
 
     }
 
@@ -94,11 +89,10 @@ public class JamalOP extends OpMode
     public void init_loop() {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
         cookie.init(hardwareMap);
         lift.init(hardwareMap);
         minicookies.init(hardwareMap);
-        minicookies.iohann.setPosition(0.8);
+        minicookies.odosp.setPosition(0.8);
     }
 
 
@@ -112,6 +106,8 @@ public class JamalOP extends OpMode
 
     }
 
+    private boolean ok_speed = false;
+
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
@@ -119,13 +115,22 @@ public class JamalOP extends OpMode
     public void loop() {
 
         //Gamepad1
+        if(gamepad1.cross && !ok_speed)
+        {
+            ok_speed = true;
+            if(speedM == 0.8f)
+            {
+                speedM = 2f;
+            }
+            else
+            {
+                speedM = 0.8f;
+            }
+        }
 
-        if (gamepad1.cross && !ChangeSpeed) {
-            speedM = 0.3f;
-            ChangeSpeed = true;
-        } else if (gamepad1.cross && ChangeSpeed) {
-            speedM = 1f;
-            ChangeSpeed = false;
+        if(!gamepad1.cross)
+        {
+            ok_speed = false;
         }
 
         if (gamepad1.dpad_up) {
@@ -141,7 +146,7 @@ public class JamalOP extends OpMode
             cookie.lb.setPower(1);
         }
 
-        double y = -gamepad1.left_stick_y;
+        double y = -gamepad1.left_stick_y * 0.7;
         double x = gamepad1.left_stick_x * 1.3;
         double rx = gamepad1.right_stick_x;
 
@@ -159,127 +164,128 @@ public class JamalOP extends OpMode
         //Gamepad2
 
 
+        if(gamepad2.triangle){
+            auto = true;
+        }
+
+        if(gamepad2.dpad_right){
+            auto = false;
+        }
+
+        if(auto){
+            brat += (gamepad2.left_stick_y/50);
+            minicookies.update_servo(-brat);
+        }
+
         //Glisiere
-        if(gamepad2.dpad_up && !HighJ) {
+       if(gamepad2.dpad_up) {
 
             lift.up(2);
             minicookies.up();
 
-            HighJ = true;
-
-
-        } else if(gamepad2.dpad_up && HighJ) {
-
-             lift.down();
-
-             HighJ = false;
+            sus = true;
+            noupstate = true;
 
         }
 
-        if(gamepad2.dpad_left && !MidJ){
+
+
+        if(gamepad2.dpad_left){
 
             lift.up(1);
             minicookies.up();
 
-            MidJ = true;
-
-        } else if(gamepad2.dpad_left){
-
-            lift.down();
-
-            MidJ = false;
+            sus = true;
+            noupstate = true;
 
         }
 
 
-        if(gamepad2.dpad_down && !LowJ){
+        if(gamepad2.circle){
 
-            minicookies.up();
-
-            LowJ = true;
-
-        }else if(gamepad2.dpad_down && LowJ){
-
-            minicookies.close();
-
-            minicookies.down();
-
-            try {
-                wait(250);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            minicookies.open();
-
-            LowJ = false;
+            lift.down();
+            
+            sus = false;
+            noupstate = false;
 
         }
 
 
         //brat carbon
-        if(gamepad2.square){
+        if(gamepad2.dpad_down){
 
             minicookies.up();
+            open = true;
+            noupstate = true;
 
         }
-        if(gamepad2.circle){
+        if(gamepad2.cross){
 
+            minicookies.close();
             minicookies.down();
+            sleep(500);
+            minicookies.open();
+            noupstate = false;
 
         }
+
 
         //cleste
-        if(gamepad2.left_bumper){
 
-           minicookies.open();
 
-           if(HighJ || MidJ) {
 
-               try {
-                   wait(250);
-               } catch (InterruptedException e) {
-                   throw new RuntimeException(e);
-               }
 
-               minicookies.nohitup();
+        if(gamepad2.square){
+            minicookies.update_servo(0);
+        }
 
-           }else if(fail && !LowJ){
+        if(gamepad2.right_bumper){
 
-               minicookies.down();
-
+            if(open||sus){
+                minicookies.openup();
+            }else {
+                minicookies.open();
             }
+
+          if(sus){
+              sleep(250);
+              minicookies.nohitup();
+          }
 
             fail = false;
 
         }
 
 
-        if(gamepad2.right_bumper){
+        if(gamepad2.left_bumper && !auto){
 
             minicookies.close();
 
-            if(!HighJ||!MidJ||!LowJ){
-                try {
-                    wait(250);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+            if(!noupstate){
+
+                sleep(250);
 
                 minicookies.miniup();
 
                 fail = true;
 
             }
+        }else if(gamepad2.left_bumper && auto){
+            minicookies.close();
         }
 
+
+
         //telemetry verificare
+        telemetry.addData("value", auto);
         telemetry.addData("position", GetCookies.setpoint);
         telemetry.addData("gl_pos", lift.gl.getCurrentPosition());
         telemetry.addData("gr_pos", lift.gr.getCurrentPosition());
         telemetry.update();
 
         lift.update();
+
+
 
     }
 
@@ -292,6 +298,8 @@ public class JamalOP extends OpMode
     public void stop() {
 
     }
+
+
 }
 
 

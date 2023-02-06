@@ -4,14 +4,19 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MiniCookies {
 
-    public Servo sl = null;
-    public Servo sr = null;
+    public ServoImplEx sl = null;
+    public ServoImplEx sr = null;
     public Servo lilpimp = null;
 
-    public Servo iohann = null;
+    public Servo odosp = null;
+
+    private ElapsedTime runtime = new ElapsedTime();
+    public double svpos = 0;
 
     private HardwareMap hwMap;
 
@@ -19,45 +24,69 @@ public class MiniCookies {
 
         hwMap = hardwareMap;
 
-        sl = hardwareMap.get(Servo.class, "sl");
-        sr = hardwareMap.get(Servo.class, "sr");
+        sl = hardwareMap.get(ServoImplEx.class, "sl");
+        sr = hardwareMap.get(ServoImplEx.class, "sr");
         lilpimp = hardwareMap.get(Servo.class, "scr");
-        iohann = hardwareMap.get(Servo.class, "odosp");
+        odosp = hardwareMap.get(Servo.class, "odosp");
 
-        sr.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
+        sl.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
         lilpimp.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
 
-        lilpimp.setPosition(0);
-        sr.setPosition(0);
-        sl.setPosition(0);
-        iohann.setPosition(1);
+        lilpimp.setPosition(0.2);
+        sr.setPosition(svpos);
+        sl.setPosition(svpos);
+        odosp.setPosition(1);
     }
 
     public void open(){
-        lilpimp.setPosition(0.1);
+
+        lilpimp.setPosition(0.15);
     }
 
     public void close(){
+
         lilpimp.setPosition(0);
+
     }
 
+    public void openup(){
+        lilpimp.setPosition(0.08);
+    }
     public void up(){
-        sl.setPosition(0.66);
-        sr.setPosition(0.66);
+
+        update_servo(0.635);
     }
 
     public void nohitup(){
-        sl.setPosition(0.56);
-        sr.setPosition(0.56);
+
+        update_servo(0.56);
     }
 
     public void miniup(){
-        sl.setPosition(0.08);
-        sr.setPosition(0.08);
+
+        update_servo(0.05);
     }
     public void down(){
-        sl.setPosition(0);
-        sr.setPosition(0);
+        if(svpos == 0){
+
+            sl.setPosition(0.30);
+            sr.setPosition(0.30);
+
+            runtime.reset();
+            runtime.startTime();
+            while(runtime.seconds() < 0.2){
+
+            }
+                sl.setPwmDisable();
+                sr.setPwmDisable();
+
+        }
+    }
+
+    public void update_servo(double svpos){
+
+        sl.setPosition(svpos);
+        sr.setPosition(svpos);
     }
 
 
