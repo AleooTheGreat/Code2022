@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name="AutoDreapta", group="LinearOpMode")
 
-
+//stanga
 public class AutoRight extends LinearOpMode {
 
     @Override
