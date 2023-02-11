@@ -13,10 +13,7 @@ public class Cookie {
     public DcMotor rf = null;
     public DcMotor rb = null;
 
-    private HardwareMap hwMap;
-
-    public void init(HardwareMap hardwareMap){
-        hwMap = hardwareMap;
+    public Cookie(HardwareMap hardwareMap){
 
         lf = hardwareMap.dcMotor.get("lf");
         lb = hardwareMap.dcMotor.get("lb");

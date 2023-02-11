@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -55,9 +56,9 @@ import org.firstinspires.ftc.teamcode.classes.MiniCookies;
 public class JamalOP extends OpMode
 {
 
-    Cookie cookie = new Cookie();
-    MiniCookies minicookies = new MiniCookies();
-    GetCookies lift = new GetCookies();
+    Cookie cookie;
+    MiniCookies minicookies;
+    GetCookies lift;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -69,7 +70,7 @@ public class JamalOP extends OpMode
     boolean noupstate = false, sus = false;
     boolean fail = false;
 
-    double speedM = 0.8f;
+    double speedM = 0.85f;
 
 
     /*
@@ -78,7 +79,11 @@ public class JamalOP extends OpMode
     @Override
     public void init() {
 
-
+        cookie = new Cookie(hardwareMap);
+        minicookies = new MiniCookies(hardwareMap);
+        lift = new GetCookies(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        minicookies.odosp.setPosition(0.8);
 
     }
 
@@ -88,11 +93,7 @@ public class JamalOP extends OpMode
     @Override
     public void init_loop() {
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        cookie.init(hardwareMap);
-        lift.init(hardwareMap);
-        minicookies.init(hardwareMap);
-        minicookies.odosp.setPosition(0.8);
+
     }
 
 
@@ -118,13 +119,13 @@ public class JamalOP extends OpMode
         if(gamepad1.cross && !ok_speed)
         {
             ok_speed = true;
-            if(speedM == 0.8f)
+            if(speedM == 0.85f)
             {
                 speedM = 2f;
             }
             else
             {
-                speedM = 0.8f;
+                speedM = 0.85f;
             }
         }
 
@@ -180,12 +181,15 @@ public class JamalOP extends OpMode
         //Glisiere
        if(gamepad2.dpad_up) {
 
-            lift.up(2);
+           /* lift.up(2);
             minicookies.up();
 
             sus = true;
             noupstate = true;
 
+            */
+
+           minicookies.update_servo(0.07);
         }
 
 
@@ -223,8 +227,6 @@ public class JamalOP extends OpMode
 
             minicookies.close();
             minicookies.down();
-            sleep(500);
-            minicookies.open();
             noupstate = false;
 
         }
@@ -243,6 +245,7 @@ public class JamalOP extends OpMode
 
             if(open||sus){
                 minicookies.openup();
+                open = false;
             }else {
                 minicookies.open();
             }
@@ -262,11 +265,7 @@ public class JamalOP extends OpMode
             minicookies.close();
 
             if(!noupstate){
-
-                sleep(250);
-
-                minicookies.miniup();
-
+                minicookies.update_servo(0.04);
                 fail = true;
 
             }

@@ -31,11 +31,9 @@ public class GetCookies {
 
     double ticks_in_degrees = 145.1 / 360;
 
-    private HardwareMap hwMap;
+    public GetCookies(HardwareMap hardwareMap) {
 
-    public void init(HardwareMap hardwareMap) {
-
-        hwMap = hardwareMap;
+        setpoint = 0;
 
         gl = hardwareMap.get(DcMotorEx.class, "lg");
         gr = hardwareMap.get(DcMotorEx.class, "rg");
