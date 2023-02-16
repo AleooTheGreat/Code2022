@@ -14,11 +14,9 @@ public class MiniCookies {
     public ServoImplEx sl = null;
     public ServoImplEx sr = null;
     public ServoImplEx lilpimp = null;
-
     public Servo odosp = null;
 
     private ElapsedTime runtime = new ElapsedTime();
-    public double svpos = 0;
 
     public MiniCookies(HardwareMap hardwareMap){
 
@@ -30,47 +28,47 @@ public class MiniCookies {
         sl.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
         lilpimp.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
 
-        lilpimp.setPosition(0.17);
-        sr.setPosition(svpos);
-        sl.setPosition(svpos);
-        odosp.setPosition(1);
+        lilpimp.setPosition(0.50);
+        sr.setPosition(0.12);
+        sl.setPosition(0.12);
+        odosp.setPosition(0.8);
     }
 
     public void open(){
 
-        lilpimp.setPosition(0.17);
+        lilpimp.setPosition(0.50);
     }
 
     public void close(){
 
-        lilpimp.setPosition(0);
+        lilpimp.setPosition(0.22);
 
     }
 
     public void openup(){
-        lilpimp.setPosition(0.06);
+        lilpimp.setPosition(0.30);
     }
     public void up(){
 
-        update_servo(0.635);
+        update_servo(0.78);
     }
 
     public void nohitup(){
 
-        update_servo(0.56);
+        update_servo(0.67);
     }
 
     public void miniup(){
-
-        update_servo(0.05);
+        update_servo(0.17);
     }
     public void down(){
 
-            sl.setPosition(0.0);
-            sr.setPosition(0.0);
+            sl.setPosition(0.12);
+            sr.setPosition(0.12);
 
             runtime.reset();
-            while(runtime.seconds() < 0.26){
+            while(runtime.seconds() < 0.18){
+
             }
             sl.setPwmDisable();
             sr.setPwmDisable();
@@ -78,19 +76,8 @@ public class MiniCookies {
     }
 
     public void update_servo(double svpos){
-
         sl.setPosition(svpos);
         sr.setPosition(svpos);
-
-        if(svpos == 0.635){
-            runtime.reset();
-            while(runtime.seconds() < 1){
-                if(runtime.seconds() > 0.65){
-                    sl.setPwmDisable();
-                    sr.setPwmDisable();
-                }
-            }
-        }
     }
 
 

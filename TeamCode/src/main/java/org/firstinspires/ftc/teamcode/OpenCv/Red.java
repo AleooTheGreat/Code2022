@@ -21,21 +21,26 @@
 
 package org.firstinspires.ftc.teamcode.OpenCv;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.AutoStanga;
+import org.firstinspires.ftc.teamcode.classes.GetCookies;
+import org.firstinspires.ftc.teamcode.classes.MiniCookies;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+@Autonomous
+public class Red extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -58,11 +63,122 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     int MIDDLE = 4;
     int RIGHT = 2;
 
+    AutoStanga autost;
     AprilTagDetection tagOfInterest = null;
+
+    SampleMecanumDrive drive ;
+    GetCookies lift;
+    MiniCookies sv;
+    ElapsedTime seqtime = new ElapsedTime();
 
     @Override
     public void runOpMode()
     {
+
+        drive = new SampleMecanumDrive(hardwareMap);
+        lift = new GetCookies(hardwareMap);
+        sv = new MiniCookies(hardwareMap);
+
+
+        //Up
+        TrajectorySequence tr1 = drive.trajectorySequenceBuilder(new Pose2d(34.37, -63.09, Math.toRadians(0.00)))
+                .addTemporalMarker(0, () -> {
+                    sv.lilpimp.setPosition(0);
+                })
+                .addTemporalMarker(0.2, () -> {
+                    sv.update_servo(0.57);
+                })
+                .lineToLinearHeading(new Pose2d(39, -23.7, Math.toRadians(0.00)))
+                .addDisplacementMarker(() -> {
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .lineToLinearHeading(new Pose2d(33, -13.00, Math.toRadians(0.00)))
+                .addDisplacementMarker(()->{
+                    sv.open();
+                    sv.update_servo(0.22);
+                })
+                .lineToLinearHeading(new Pose2d(59.10, -12.5, Math.toRadians(0.00)))
+                .build();
+
+
+        TrajectorySequence tr2 = drive.trajectorySequenceBuilder(tr1.end())
+                .waitSeconds(0.5)
+                .addTemporalMarker(0,() -> {
+                    sv.close();
+                })
+                .addTemporalMarker(0.35, () -> {
+                    sv.update_servo(0.57);
+                })
+                .splineToLinearHeading(new Pose2d(39.00, -16.69, Math.toRadians(25.00)), Math.toRadians(-25.00))
+                .addDisplacementMarker(()->{
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.00, -12.20, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .addDisplacementMarker(()->{
+                    sv.open();
+                    sv.update_servo(0.20);
+                })
+                .splineToLinearHeading(new Pose2d(59.10, -12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
+                .build();
+
+        TrajectorySequence tr3 = drive.trajectorySequenceBuilder(tr2.end())
+                .waitSeconds(0.5)
+                .addTemporalMarker(0,() -> {
+                    sv.close();
+                })
+                .addTemporalMarker(0.3, () -> {
+                    sv.update_servo(0.57);
+                })
+                .splineToLinearHeading(new Pose2d(39.00, -16.69, Math.toRadians(25.00)), Math.toRadians(-25.00))
+                .addDisplacementMarker(()->{
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.00, -12.20, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .addDisplacementMarker(()->{
+                    sv.open();
+                    sv.update_servo(0.18);
+                })
+                .splineToLinearHeading(new Pose2d(59.10, -12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
+                .build();
+
+
+        TrajectorySequence tr4 = drive.trajectorySequenceBuilder((tr3.end()))
+                .waitSeconds(0.5)
+                .addTemporalMarker(0,() -> {
+                    sv.close();
+                })
+                .addTemporalMarker(0.3, () -> {
+                    sv.update_servo(0.57);
+                })
+                .splineToLinearHeading(new Pose2d(39.00, -16.69, Math.toRadians(25.00)), Math.toRadians(-25.00))
+                .addDisplacementMarker(()->{
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.00, -12.20, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .addDisplacementMarker(()->{
+                    sv.open();
+                    sv.update_servo(0.16);
+                })
+                .splineToLinearHeading(new Pose2d(59.10, -12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
+                .build();
+
+        TrajectorySequence trmid = drive.trajectorySequenceBuilder(tr4.end())
+
+                .lineToLinearHeading(new Pose2d(34.86, -11.75, Math.toRadians(0.00)))
+                .build();
+
+        TrajectorySequence trright = drive.trajectorySequenceBuilder(tr4.end())
+                .lineToLinearHeading(new Pose2d(11.42, -10.26, Math.toRadians(0.00)))
+                .build();
+
+
+
+        drive.setPoseEstimate(tr1.start());
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -168,15 +284,46 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
+            drive.followTrajectorySequence(tr1);
+            drive.followTrajectorySequence(tr2);
+            drive.followTrajectorySequence(tr3);
+            drive.followTrajectorySequence(tr4);
 
         }else if(tagOfInterest.id == MIDDLE){
+            drive.followTrajectorySequence(tr1);
+            drive.followTrajectorySequence(tr2);
+            drive.followTrajectorySequence(tr3);
+            drive.followTrajectorySequence(tr4);
+            drive.followTrajectorySequence(trmid);
+
+
 
         }else if(tagOfInterest.id == RIGHT){
+            drive.followTrajectorySequence(tr1);
+            drive.followTrajectorySequence(tr2);
+            drive.followTrajectorySequence(tr3);
+            drive.followTrajectorySequence(tr4);
+            drive.followTrajectorySequence(trright);
 
         }
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+    }
+    public void seq1() {
+        lift.up(1);
+        sv.update_servo(0.78);
+        seqtime.reset();
+        while(seqtime.seconds() < 1) {
+            if(seqtime.seconds() > 0.6) {
+                sv.openup();
+            }
+            if(seqtime.seconds() > 0.8){
+                sv.update_servo(0.67);
+            }
+            if(seqtime.seconds() > 0.95){
+                lift.down();
+            }
+            lift.update();
+        }
     }
 
     void tagToTelemetry(AprilTagDetection detection)

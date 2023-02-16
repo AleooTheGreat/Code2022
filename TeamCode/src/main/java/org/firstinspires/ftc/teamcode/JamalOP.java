@@ -36,6 +36,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -47,7 +48,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.classes.Cookie;
 import org.firstinspires.ftc.teamcode.classes.GetCookies;
 import org.firstinspires.ftc.teamcode.classes.MiniCookies;
-
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
 @TeleOp(name="JamalOp", group="Iterative Opmode")
@@ -56,7 +57,7 @@ import org.firstinspires.ftc.teamcode.classes.MiniCookies;
 public class JamalOP extends OpMode
 {
 
-    Cookie cookie;
+    SampleMecanumDrive cookie;
     MiniCookies minicookies;
     GetCookies lift;
 
@@ -79,11 +80,11 @@ public class JamalOP extends OpMode
     @Override
     public void init() {
 
-        cookie = new Cookie(hardwareMap);
+        cookie = new SampleMecanumDrive(hardwareMap);
         minicookies = new MiniCookies(hardwareMap);
         lift = new GetCookies(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        minicookies.odosp.setPosition(0.8);
+        minicookies.odosp.setPosition(0.5);
 
     }
 
@@ -134,33 +135,13 @@ public class JamalOP extends OpMode
             ok_speed = false;
         }
 
-        if (gamepad1.dpad_up) {
-            cookie.rb.setPower(1);
-        }
-        if (gamepad1.dpad_down) {
-            cookie.rf.setPower(1);
-        }
-        if (gamepad1.dpad_right) {
-            cookie.lf.setPower(1);
-        }
-        if (gamepad1.dpad_left) {
-            cookie.lb.setPower(1);
-        }
-
         double y = -gamepad1.left_stick_y * 0.7;
         double x = gamepad1.left_stick_x * 1.3;
         double rx = gamepad1.right_stick_x;
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double lfp = (y + x + rx) / denominator;
-        double lbp = (y - x + rx) / denominator;
-        double rfp = (y - x - rx) / denominator;
-        double rbp = (y + x - rx) / denominator;
-
-        cookie.lf.setPower(lfp * speedM);
-        cookie.lb.setPower(lbp * speedM);
-        cookie.rf.setPower(rfp * speedM);
-        cookie.rb.setPower(rbp * speedM);
+        cookie.setWeightedDrivePower(new Pose2d(y * speedM,
+                -x * 0.3,
+                -rx * speedM));
 
         //Gamepad2
 
@@ -179,18 +160,19 @@ public class JamalOP extends OpMode
         }
 
         //Glisiere
-       if(gamepad2.dpad_up) {
+       /*if(gamepad2.dpad_up) {
 
-           /* lift.up(2);
+            lift.up(2);
             minicookies.up();
 
             sus = true;
             noupstate = true;
 
-            */
 
-           minicookies.update_servo(0.07);
+
+           minicookies.update_servo(0.19);
         }
+        */
 
 
 
@@ -238,7 +220,7 @@ public class JamalOP extends OpMode
 
 
         if(gamepad2.square){
-            minicookies.update_servo(0);
+            minicookies.down();
         }
 
         if(gamepad2.right_bumper){
@@ -251,7 +233,9 @@ public class JamalOP extends OpMode
             }
 
           if(sus){
-              sleep(250);
+              while(runtime.seconds() < 0.250){
+
+              }
               minicookies.nohitup();
           }
 
@@ -265,7 +249,11 @@ public class JamalOP extends OpMode
             minicookies.close();
 
             if(!noupstate){
-                minicookies.update_servo(0.04);
+                runtime.reset();
+                while(runtime.seconds() < 0.250){
+
+                }
+                minicookies.miniup();
                 fail = true;
 
             }
@@ -280,6 +268,7 @@ public class JamalOP extends OpMode
         telemetry.addData("position", GetCookies.setpoint);
         telemetry.addData("gl_pos", lift.gl.getCurrentPosition());
         telemetry.addData("gr_pos", lift.gr.getCurrentPosition());
+        telemetry.addData("val",brat);
         telemetry.update();
 
         lift.update();

@@ -70,7 +70,7 @@ public class Test extends OpMode
     @Override
     public void init() {
     sv = new MiniCookies(hardwareMap);
-
+    sv.lilpimp.setPosition(0.01);
     }
 
     @Override
@@ -83,7 +83,6 @@ public class Test extends OpMode
      */
     @Override
     public void start() {
-
     }
 
     /*
@@ -92,20 +91,13 @@ public class Test extends OpMode
     @Override
     public void loop() {
         if(gamepad2.dpad_up){
-            pos = 0.05;
+            sv.update_servo(0.5);
         }
-        if(gamepad2.dpad_down){
-            pos = 0.10;
-        }
-        if(gamepad2.dpad_right) {
-            pos = 0.135;
-        }
-        if(gamepad2.dpad_left){
-            pos = 0.20;
+        if(gamepad2.dpad_up){
+            sv.update_servo(0.5);
         }
         sv.update_servo(pos);
-
-        telemetry.addData("position", pos);
+        telemetry.addData("pos",pos);
         telemetry.update();
     }
 

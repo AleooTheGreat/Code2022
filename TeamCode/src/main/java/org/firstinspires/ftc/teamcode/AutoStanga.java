@@ -23,10 +23,7 @@ public class AutoStanga extends LinearOpMode {
     SampleMecanumDrive drive ;
     GetCookies lift;
     MiniCookies sv;
-
     ElapsedTime seqtime = new ElapsedTime();
-
-    Queue<TrajectorySequence> trajectoryQueue;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,80 +39,123 @@ public class AutoStanga extends LinearOpMode {
                     sv.lilpimp.setPosition(0);
                 })
                 .addTemporalMarker(0.2, () -> {
-                    sv.update_servo(0.45);
+                    sv.update_servo(0.57);
                 })
-                .lineTo(new Vector2d(38.2, 24.4))
+                .lineToLinearHeading(new Pose2d(39, 23.70, Math.toRadians(0.00)))
                 .addDisplacementMarker(() -> {
                     seq1();
                 })
-                .lineTo(new Vector2d(32.98, 12.59))
+                .waitSeconds(0.2)
+                .lineToLinearHeading(new Pose2d(33, 12.77, Math.toRadians(0.00)))
+                .addDisplacementMarker(()->{
+                    sv.open();
+                    sv.update_servo(0.23);
+                })
+                .lineToLinearHeading(new Pose2d(59, 12.50, Math.toRadians(0.00)))
                 .build();
 
+
         TrajectorySequence tr2 = drive.trajectorySequenceBuilder(tr1.end())
+                .waitSeconds(0.5)
                 .addTemporalMarker(0,() -> {
-                    sv.down();
+                    sv.close();
                 })
-                .waitSeconds(3)
-                .addTemporalMarker(2, () -> {
-                    sv.open();
-                    sv.update_servo(0.12);
+                .addTemporalMarker(0.35, () -> {
+                    sv.update_servo(0.57);
                 })
-                .lineTo(new Vector2d(59.65, 12.8))
+                .splineToLinearHeading(new Pose2d(36.55, 17.51, Math.toRadians(-27.00)), Math.toRadians(25.00))
+                .addDisplacementMarker(()->{
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.42, 12.38, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .addDisplacementMarker(()->{
+                        sv.open();
+                        sv.update_servo(0.20);
+                })
+                .lineToLinearHeading(new Pose2d(59.05, 12.50, Math.toRadians(2.00)))
                 .build();
 
         TrajectorySequence tr3 = drive.trajectorySequenceBuilder(tr2.end())
-                .waitSeconds(0.3)
-                .addTemporalMarker(0,()->{
+                .waitSeconds(0.5)
+                .addTemporalMarker(0,() -> {
                     sv.close();
                 })
-                .addTemporalMarker(0.2,()->{
-                    sv.update_servo(0.45);
+                .addTemporalMarker(0.3, () -> {
+                    sv.update_servo(0.57);
                 })
-                .splineToLinearHeading(new Pose2d(37.83, 16.99, Math.toRadians(-25.00)), Math.toRadians(20.00))
+                .splineToLinearHeading(new Pose2d(36.55, 17.51, Math.toRadians(-27.00)), Math.toRadians(25.00))
                 .addDisplacementMarker(()->{
-                seq1();
-                })
-                .splineToLinearHeading(new Pose2d(54.00, 13.75, Math.toRadians(0.00)), Math.toRadians(20.00))
-                .build();
-
-      /*  TrajectorySequence tr4 = drive.trajectorySequenceBuilder((tr3.end()))
-                .waitSeconds(3)
-                .addTemporalMarker(1.2,()->{
-                    sv.down();
-                })
-                .addTemporalMarker(2.6,()->{
-                            sv.open();
-                            sv.update_servo(0.095);
-                        })
-                .lineTo(new Vector2d(58.00, 13.75))
-                .build();
-
-       */
-
-
-
-        /*   TrajectorySequence tr5 = drive.trajectorySequenceBuilder(tr3.end())
-                .waitSeconds(0.2)
-                .addTemporalMarker(0, () -> {
-                    sv.lilpimp.setPosition(0.0);
-                })
-                .waitSeconds(0.15)
-                .addTemporalMarker(0.15, () -> {
-                    sv.update_servo(0.45);
-                })
-                .splineToLinearHeading(new Pose2d(37.83, 16.99, Math.toRadians(-25.00)), Math.toRadians(20.00))
-                .addDisplacementMarker( () -> {
                     seq1();
                 })
-                .addDisplacementMarker(()-> {
-                    sv.down();
-                    sv.update_servo(0.04);
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.42, 12.38, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .addDisplacementMarker(()->{
                     sv.open();
+                    sv.update_servo(0.17);
                 })
-                .splineToLinearHeading(new Pose2d(58.00, 13.75, Math.toRadians(0.00)), Math.toRadians(20.00))
+                .lineToLinearHeading(new Pose2d(59.10, 12.50, Math.toRadians(2.00)))
                 .build();
 
-*/
+
+        TrajectorySequence tr4 = drive.trajectorySequenceBuilder((tr3.end()))
+                .waitSeconds(0.5)
+                .addTemporalMarker(0,() -> {
+                    sv.close();
+                })
+                .addTemporalMarker(0.3, () -> {
+                    sv.update_servo(0.57);
+                })
+                .splineToLinearHeading(new Pose2d(39, 16.96, Math.toRadians(-25.00)), Math.toRadians(25.00))
+                .addDisplacementMarker(()->{
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.00, 12.20, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .addDisplacementMarker(()->{
+                    sv.open();
+                    sv.update_servo(0.15);
+                })
+                .splineToLinearHeading(new Pose2d(59.2, 12.50, Math.toRadians(0.50)), Math.toRadians(0.00))
+                .build();
+
+        TrajectorySequence tr5 = drive.trajectorySequenceBuilder((tr3.end()))
+                .waitSeconds(0.5)
+                .addTemporalMarker(0,() -> {
+                    sv.close();
+                })
+                .addTemporalMarker(0.3, () -> {
+                    sv.update_servo(0.57);
+                })
+                .splineToLinearHeading(new Pose2d(39, 16.96, Math.toRadians(-25.00)), Math.toRadians(25.00))
+                .addDisplacementMarker(()->{
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.00, 12.20, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .addDisplacementMarker(()->{
+                    sv.open();
+                    sv.update_servo(0.16);
+                })
+                .splineToLinearHeading(new Pose2d(59.35, 12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
+                .build();
+
+        TrajectorySequence tr6 = drive.trajectorySequenceBuilder((tr3.end()))
+                .waitSeconds(0.5)
+                .addTemporalMarker(0,() -> {
+                    sv.close();
+                })
+                .addTemporalMarker(0.3, () -> {
+                    sv.update_servo(0.57);
+                })
+                .splineToLinearHeading(new Pose2d(39, 16.96, Math.toRadians(-25.00)), Math.toRadians(25.00))
+                .addDisplacementMarker(()->{
+                    seq1();
+                })
+                .waitSeconds(0.2)
+                .splineToLinearHeading(new Pose2d(48.00, 12.20, Math.toRadians(0.00)), Math.toRadians(-12.00))
+                .splineToLinearHeading(new Pose2d(59.4, 12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
+                .build();
 
         drive.setPoseEstimate(tr1.start());
 
@@ -128,27 +168,27 @@ public class AutoStanga extends LinearOpMode {
         drive.followTrajectorySequence(tr1);
         drive.followTrajectorySequence(tr2);
         drive.followTrajectorySequence(tr3);
-        //drive.followTrajectorySequence(tr4);
-        //drive.followTrajectorySequence(tr3);
+       // drive.followTrajectorySequence(tr4);
+      //  drive.followTrajectorySequence(tr5);
+        //drive.followTrajectorySequence(tr6);
     }
 
     public void seq1() {
         lift.up(1);
-        sv.update_servo(0.64);
+        sv.update_servo(0.78);
         seqtime.reset();
         while(seqtime.seconds() < 1) {
-            if(seqtime.seconds() > 0.5) {
+            if(seqtime.seconds() > 0.6) {
                 sv.openup();
             }
-            if(seqtime.seconds() > 0.7){
-                sv.update_servo(0.45);
+            if(seqtime.seconds() > 0.8){
+                sv.update_servo(0.67);
             }
-            if(seqtime.seconds() > 0.9){
+            if(seqtime.seconds() > 0.95){
                 lift.down();
             }
             lift.update();
         }
     }
-
-
     }
+
