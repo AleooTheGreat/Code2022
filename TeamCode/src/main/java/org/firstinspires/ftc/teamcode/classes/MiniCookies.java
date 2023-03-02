@@ -20,13 +20,7 @@ public class MiniCookies {
     public ServoImplEx claw= null;
     public ServoImplEx pick = null;
 
-    public ServoImplEx arm1= null;
-    public ServoImplEx arm2 = null;
-
     public DcMotorEx base = null;
-
-    double arm_min = 0.23;
-    double arm_max = 0.8;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -43,14 +37,11 @@ public class MiniCookies {
 
         pick = hardwareMap.get(ServoImplEx.class, "pick");
 
-        arm1 = hardwareMap.get(ServoImplEx.class, "arm1");
-        arm2 = hardwareMap.get(ServoImplEx.class, "arm2");
 
         base.setDirection(DcMotorEx.Direction.REVERSE);
         upr.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
         posa.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
         pick.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
-        //arm2.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
 
         base.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         base.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -59,7 +50,7 @@ public class MiniCookies {
 
         poweroff();
 
-         base.setTargetPosition(0);
+        base.setTargetPosition(0);
 
 
 
@@ -72,16 +63,11 @@ public class MiniCookies {
         upl.setPwmDisable();
         upr.setPwmDisable();
 
-        arm1.setPwmDisable();
-        arm2.setPwmDisable();
-
         posa.setPwmDisable();
         claw.setPwmDisable();
     }
 
     public void startoff(){
-        arm1.setPosition(0.34);
-        arm2.setPosition(0.34);
 
         upl.setPosition(0.14);
         upr.setPosition(0.14);
@@ -118,13 +104,8 @@ public class MiniCookies {
     public void down(){
         posa.setPosition(0.5);
         open();
-        arm(0.696);
     }
 
-  public void arm(double position){
-        arm1.setPosition(position);
-        arm2.setPosition(position);
-  }
 
     public void load() {
 
@@ -135,7 +116,6 @@ public class MiniCookies {
         while (runtime.seconds() < 1) {
 
             if(runtime.seconds()> 0.15) {
-                arm(0.305);
             }
 
 
@@ -163,7 +143,6 @@ public class MiniCookies {
         posa.setPosition(0.565);
         base.setTargetPosition(-544);
         base.setPower(1);
-        arm(0.6105);
 
 
     }
@@ -174,7 +153,7 @@ public class MiniCookies {
         posa.setPosition(0.5594);
         base.setTargetPosition(-541);
         base.setPower(1);
-        arm(0.6366);
+
 
     }
 
@@ -184,7 +163,7 @@ public class MiniCookies {
         posa.setPosition(0.5011);
         base.setTargetPosition(-544);
         base.setPower(1);
-        arm(0.6783);
+
 
     }
 
@@ -194,7 +173,7 @@ public class MiniCookies {
         posa.setPosition(0.5);
         base.setTargetPosition(-550);
         base.setPower(1);
-        arm(0.7016);
+
     }
 
     public void stack1(){
@@ -203,7 +182,7 @@ public class MiniCookies {
         posa.setPosition(0.5);
         base.setTargetPosition(-550);
         base.setPower(1);
-        arm(0.721);
+
 
     }
 

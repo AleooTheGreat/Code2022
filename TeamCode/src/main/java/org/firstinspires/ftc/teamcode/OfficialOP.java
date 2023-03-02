@@ -186,12 +186,12 @@ public class OfficialOP extends LinearOpMode {
         minicookies.base.setPower(1);
 
         minicookies.pick.setPosition(minicookies.pick.getPosition() + gamepad2.right_stick_x/100);
-        minicookies.arm(minicookies.arm1.getPosition() + gamepad2.left_stick_y/100);
+       // minicookies.arm(minicookies.arm1.getPosition() + gamepad2.left_stick_y/100);
         minicookies.posa.setPosition(minicookies.posa.getPosition() + gamepad2.right_stick_y/100);
 
        telemetry.addData("rotatie", minicookies.base.getCurrentPosition());
-       telemetry.addData("arm_pos", minicookies.arm1.getPosition());
-       telemetry.addData("arm_pos2", minicookies.arm2.getPosition());
+      // telemetry.addData("arm_pos", minicookies.arm1.getPosition());
+      // telemetry.addData("arm_pos2", minicookies.arm2.getPosition());
        telemetry.addData("pozarm", minicookies.posa.getPosition());
        telemetry.addData("lastpos",last_position);
        telemetry.addData("pos",position);
