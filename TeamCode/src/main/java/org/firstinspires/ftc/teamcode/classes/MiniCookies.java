@@ -50,7 +50,7 @@ public class MiniCookies {
         upr.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
         posa.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
         pick.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
-        arm2.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
+        //arm2.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
 
         base.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         base.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
