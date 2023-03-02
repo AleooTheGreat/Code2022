@@ -27,9 +27,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @Config
 @Autonomous(group = "drive")
-@Disabled
 public class TrackWidthTuner extends LinearOpMode {
-    public static double ANGLE = 200; // deg
+    public static double ANGLE = 180; // deg
     public static int NUM_TRIALS = 5;
     public static int DELAY = 1000; // ms
 
@@ -38,7 +37,6 @@ public class TrackWidthTuner extends LinearOpMode {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        MiniCookies mini = new MiniCookies(hardwareMap);
 
         // TODO: if you haven't already, set the localizer to something that doesn't depend on
         // drive encoders for computing the heading

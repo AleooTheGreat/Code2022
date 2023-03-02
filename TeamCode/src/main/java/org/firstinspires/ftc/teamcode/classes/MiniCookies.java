@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.classes;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,74 +13,240 @@ import com.qualcomm.robotcore.util.Range;
 
 public class MiniCookies {
 
-    public ServoImplEx sl = null;
-    public ServoImplEx sr = null;
-    public ServoImplEx lilpimp = null;
-    public Servo odosp = null;
+
+    public ServoImplEx upl = null;
+    public ServoImplEx upr = null;
+    public ServoImplEx posa = null;
+    public ServoImplEx claw= null;
+    public ServoImplEx pick = null;
+
+    public ServoImplEx arm1= null;
+    public ServoImplEx arm2 = null;
+
+    public DcMotorEx base = null;
+
+    double arm_min = 0.23;
+    double arm_max = 0.8;
 
     private ElapsedTime runtime = new ElapsedTime();
 
     public MiniCookies(HardwareMap hardwareMap){
 
-        sl = hardwareMap.get(ServoImplEx.class, "sl");
-        sr = hardwareMap.get(ServoImplEx.class, "sr");
-        lilpimp = hardwareMap.get(ServoImplEx.class, "scr");
-        odosp = hardwareMap.get(Servo.class, "odosp");
 
-        sl.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
-        lilpimp.setDirection(com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE);
+        base = hardwareMap.get(DcMotorEx.class, "base");
 
-        lilpimp.setPosition(0.50);
-        sr.setPosition(0.12);
-        sl.setPosition(0.12);
-        odosp.setPosition(0.8);
+        posa = hardwareMap.get(ServoImplEx.class, "posa");
+        claw = hardwareMap.get(ServoImplEx.class, "claw");
+
+        upl = hardwareMap.get(ServoImplEx.class, "upl");
+        upr = hardwareMap.get(ServoImplEx.class, "upr");
+
+        pick = hardwareMap.get(ServoImplEx.class, "pick");
+
+        arm1 = hardwareMap.get(ServoImplEx.class, "arm1");
+        arm2 = hardwareMap.get(ServoImplEx.class, "arm2");
+
+        base.setDirection(DcMotorEx.Direction.REVERSE);
+        upr.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
+        posa.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
+        pick.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
+        arm2.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
+
+        base.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        base.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        base.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        poweroff();
+
+         base.setTargetPosition(0);
+
+
+
+
+    }
+
+    public void poweroff(){
+
+
+        upl.setPwmDisable();
+        upr.setPwmDisable();
+
+        arm1.setPwmDisable();
+        arm2.setPwmDisable();
+
+        posa.setPwmDisable();
+        claw.setPwmDisable();
+    }
+
+    public void startoff(){
+        arm1.setPosition(0.34);
+        arm2.setPosition(0.34);
+
+        upl.setPosition(0.14);
+        upr.setPosition(0.14);
+
+        posa.setPosition(0.5);
+
+        claw.setPosition(0.47);
+        pick.setPosition(0.1);
+    }
+
+    public void take(){
+        upl.setPosition(0.14);
+        upr.setPosition(0.14);
+    }
+
+    public void put(){
+        upl.setPosition(0.75);
+        upr.setPosition(0.75);
+
     }
 
     public void open(){
 
-        lilpimp.setPosition(0.50);
+        claw.setPosition(0.47);
     }
 
     public void close(){
 
-        lilpimp.setPosition(0.22);
+        claw.setPosition(0.75);
 
     }
 
-    public void openup(){
-        lilpimp.setPosition(0.30);
-    }
-    public void up(){
 
-        update_servo(0.78);
-    }
-
-    public void nohitup(){
-
-        update_servo(0.67);
-    }
-
-    public void miniup(){
-        update_servo(0.17);
-    }
     public void down(){
+        posa.setPosition(0.5);
+        open();
+        arm(0.696);
+    }
 
-            sl.setPosition(0.12);
-            sr.setPosition(0.12);
+  public void arm(double position){
+        arm1.setPosition(position);
+        arm2.setPosition(position);
+  }
 
-            runtime.reset();
-            while(runtime.seconds() < 0.18){
+    public void load() {
+
+        close();
+
+        runtime.reset();
+
+        while (runtime.seconds() < 1) {
+
+            if(runtime.seconds()> 0.15) {
+                arm(0.305);
+            }
+
+
+            if (runtime.seconds() > 0.3) {
+                base.setTargetPosition(0);
+                base.setPower(1);
+            }
+
+            if(runtime.seconds() > 0.4){
+                posa.setPosition(0.207);
+            }
+
+            if (runtime.seconds() > 0.95) {
+
+                claw.setPosition(0.47);
 
             }
-            sl.setPwmDisable();
-            sr.setPwmDisable();
+
+        }
+    }
+
+    public void stack5(){
+
+        open();
+        posa.setPosition(0.565);
+        base.setTargetPosition(-544);
+        base.setPower(1);
+        arm(0.6105);
+
 
     }
 
-    public void update_servo(double svpos){
-        sl.setPosition(svpos);
-        sr.setPosition(svpos);
+    public void stack4(){
+
+        open();
+        posa.setPosition(0.5594);
+        base.setTargetPosition(-541);
+        base.setPower(1);
+        arm(0.6366);
+
     }
 
+    public void stack3(){
+
+        open();
+        posa.setPosition(0.5011);
+        base.setTargetPosition(-544);
+        base.setPower(1);
+        arm(0.6783);
+
+    }
+
+    public void stack2(){
+
+        open();
+        posa.setPosition(0.5);
+        base.setTargetPosition(-550);
+        base.setPower(1);
+        arm(0.7016);
+    }
+
+    public void stack1(){
+
+        open();
+        posa.setPosition(0.5);
+        base.setTargetPosition(-550);
+        base.setPower(1);
+        arm(0.721);
+
+    }
+
+    public void waitforload(){
+        close();
+
+        runtime.reset();
+
+        while (runtime.seconds() < 1) {
+
+            if (runtime.seconds() > 0.2) {
+
+
+
+            }
+
+            if(runtime.seconds() > 0.4){
+
+                posa.setPosition(0.235);
+
+
+            }
+        }
+    }
+
+    public void afterload(){
+
+        runtime.reset();
+
+        while (runtime.seconds() < 1) {
+
+            if (runtime.seconds() > 0.2) {
+
+
+            }
+
+            if (runtime.seconds() > 0.55) {
+
+                claw.setPosition(0.47);
+
+            }
+
+        }
+    }
 
 }

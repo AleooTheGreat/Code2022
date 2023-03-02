@@ -44,7 +44,7 @@ import java.util.Objects;
  */
 @Config
 @Autonomous(group = "drive")
-@Disabled
+
 public class ManualFeedforwardTuner extends LinearOpMode {
     public static double DISTANCE = 75; // in
 
@@ -75,7 +75,6 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, dashboard.getTelemetry());
 
         drive = new SampleMecanumDrive(hardwareMap);
-        MiniCookies mini = new MiniCookies(hardwareMap);
 
         mode = Mode.TUNING_MODE;
 

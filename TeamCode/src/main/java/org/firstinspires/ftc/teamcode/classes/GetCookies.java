@@ -22,10 +22,11 @@ public class GetCookies {
 
     public ElapsedTime runtime = new ElapsedTime();
 
-    public static double kP = 0.01;
+    public static double maxPIDPower = 0.5;
+    public static double kP = 0.013;
     public static double kI = 0.0001;
-    public static double kD = 0.000004;
-    public static double kF = 0.008;
+    public static double kD = 0.0001;
+    public static double kF = 0.003;
 
     public static double setpoint = 0;
 
@@ -55,27 +56,30 @@ public class GetCookies {
 
     public void update(){
 
-        if(setpoint == 0 && gl.getCurrentPosition() < 100 && gr.getCurrentPosition() < 100){
+        if(setpoint == 0 && gl.getCurrentPosition() < 50 && gr.getCurrentPosition() < 50){
             gl.setPower(0);
             gr.setPower(0);
         }else {
             controllerl.setPID(kP, kI, kD);
             int glPos = gl.getCurrentPosition();
-            double pidl = controllerl.calculate(glPos, setpoint);
+            double pidl = Math.min(controllerl.calculate(glPos, setpoint), maxPIDPower);
             double ffl = Math.cos(Math.toRadians(setpoint / ticks_in_degrees)) * kF;
 
             double powerl = pidl + ffl;
 
             gl.setPower(powerl);
 
+
             controllerr.setPID(kP, kI, kD);
             int grPos = gr.getCurrentPosition();
-            double pidr = controllerr.calculate(grPos, setpoint);
+            double pidr = Math.min(controllerr.calculate(grPos, setpoint), maxPIDPower);
             double ffr = Math.cos(Math.toRadians(setpoint / ticks_in_degrees)) * kF;
 
             double powerr = pidr + ffr;
 
             gr.setPower(powerr);
+
+
         }
 
     }
@@ -87,9 +91,9 @@ public class GetCookies {
 
     public void up(int level){
         if(level == 1){
-            setpoint = 500;
+            setpoint = 300;
         }else if(level == 2){
-            setpoint = 940;
+            setpoint = 730;
         }else{
             setpoint = 0;
         }

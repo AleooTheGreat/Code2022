@@ -22,12 +22,13 @@
 package org.firstinspires.ftc.teamcode.OpenCv;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.AutoStanga;
+import org.firstinspires.ftc.teamcode.Blue_red;
 import org.firstinspires.ftc.teamcode.classes.GetCookies;
 import org.firstinspires.ftc.teamcode.classes.MiniCookies;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -63,7 +64,7 @@ public class Blue extends LinearOpMode
     int MIDDLE = 4;
     int RIGHT = 2;
 
-    AutoStanga autost;
+
     AprilTagDetection tagOfInterest = null;
 
     SampleMecanumDrive drive ;
@@ -79,126 +80,6 @@ public class Blue extends LinearOpMode
         lift = new GetCookies(hardwareMap);
         sv = new MiniCookies(hardwareMap);
 
-
-        //Up
-        TrajectorySequence tr1 = drive.trajectorySequenceBuilder(new Pose2d(34.37, 63.09, Math.toRadians(0.00)))
-                .addTemporalMarker(0, () -> {
-                    sv.lilpimp.setPosition(0);
-                })
-                .addTemporalMarker(0.2, () -> {
-                    sv.update_servo(0.57);
-                })
-                .lineToLinearHeading(new Pose2d(39, 23.7, Math.toRadians(0.00)))
-                .addDisplacementMarker(() -> {
-                    seq1();
-                })
-                .waitSeconds(0.2)
-                .lineToLinearHeading(new Pose2d(33, 13.00, Math.toRadians(0.00)))
-                .addDisplacementMarker(()->{
-                    sv.open();
-                    sv.update_servo(0.22);
-                })
-                .lineToLinearHeading(new Pose2d(59.10, 12.5, Math.toRadians(0.00)))
-                .build();
-
-
-        TrajectorySequence tr2 = drive.trajectorySequenceBuilder(tr1.end())
-                .waitSeconds(0.5)
-                .addTemporalMarker(0,() -> {
-                    sv.close();
-                })
-                .addTemporalMarker(0.35, () -> {
-                    sv.update_servo(0.57);
-                })
-                .splineToLinearHeading(new Pose2d(39.00, 16.69, Math.toRadians(-25.00)), Math.toRadians(25.00))
-                .addDisplacementMarker(()->{
-                    seq1();
-                })
-                .waitSeconds(0.2)
-                .splineToLinearHeading(new Pose2d(48.00, 12.20, Math.toRadians(0.00)), Math.toRadians(12.00))
-                .addDisplacementMarker(()->{
-                    sv.open();
-                    sv.update_servo(0.20);
-                })
-                .splineToLinearHeading(new Pose2d(59.10, 12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
-                .build();
-
-        TrajectorySequence tr3 = drive.trajectorySequenceBuilder(tr2.end())
-                .waitSeconds(0.5)
-                .addTemporalMarker(0,() -> {
-                    sv.close();
-                })
-                .addTemporalMarker(0.3, () -> {
-                    sv.update_servo(0.57);
-                })
-                .splineToLinearHeading(new Pose2d(39.00, 16.69, Math.toRadians(-25.00)), Math.toRadians(25.00))
-                .addDisplacementMarker(()->{
-                    seq1();
-                })
-                .waitSeconds(0.2)
-                .splineToLinearHeading(new Pose2d(48.00, 12.20, Math.toRadians(0.00)), Math.toRadians(12.00))
-                .addDisplacementMarker(()->{
-                    sv.open();
-                    sv.update_servo(0.18);
-                })
-                .splineToLinearHeading(new Pose2d(59.10, 12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
-                .build();
-
-
-        TrajectorySequence tr4 = drive.trajectorySequenceBuilder((tr3.end()))
-                .waitSeconds(0.5)
-                .addTemporalMarker(0,() -> {
-                    sv.close();
-                })
-                .addTemporalMarker(0.3, () -> {
-                    sv.update_servo(0.57);
-                })
-                .splineToLinearHeading(new Pose2d(39.00, 16.69, Math.toRadians(-25.00)), Math.toRadians(25.00))
-                .addDisplacementMarker(()->{
-                    seq1();
-                })
-                .waitSeconds(0.2)
-                .splineToLinearHeading(new Pose2d(48.00, 12.20, Math.toRadians(0.00)), Math.toRadians(12.00))
-                .addDisplacementMarker(()->{
-                    sv.open();
-                    sv.update_servo(0.16);
-                })
-                .splineToLinearHeading(new Pose2d(59.2, 12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
-                .build();
-
-        TrajectorySequence tr5 = drive.trajectorySequenceBuilder((tr3.end()))
-                .waitSeconds(0.5)
-                .addTemporalMarker(0,() -> {
-                    sv.close();
-                })
-                .addTemporalMarker(0.3, () -> {
-                    sv.update_servo(0.57);
-                })
-                .splineToLinearHeading(new Pose2d(39.00, 16.69, Math.toRadians(-25.00)), Math.toRadians(25.00))
-                .addDisplacementMarker(()->{
-                    seq1();
-                })
-                .waitSeconds(0.2)
-                .splineToLinearHeading(new Pose2d(48.00, 12.20, Math.toRadians(0.00)), Math.toRadians(12.00))
-                .addDisplacementMarker(()->{
-                    sv.open();
-                    sv.update_servo(0.14);
-                })
-                .splineToLinearHeading(new Pose2d(59.25, 12.50, Math.toRadians(0.00)), Math.toRadians(0.00))
-                .build();
-
-        TrajectorySequence trmid = drive.trajectorySequenceBuilder(tr4.end())
-
-                .lineToLinearHeading(new Pose2d(34.86, 11.75, Math.toRadians(0.00)))
-                .build();
-
-        TrajectorySequence trright = drive.trajectorySequenceBuilder(tr4.end())
-                .lineToLinearHeading(new Pose2d(11.42, 10.26, Math.toRadians(0.00)))
-                .build();
-
-
-
-        drive.setPoseEstimate(tr1.start());
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -221,6 +102,60 @@ public class Blue extends LinearOpMode
         });
 
         telemetry.setMsTransmissionInterval(50);
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        MiniCookies minicookies = new MiniCookies(hardwareMap);
+        GetCookies lift = new GetCookies(hardwareMap);
+        ElapsedTime runtime = new ElapsedTime();
+        ElapsedTime picki = new ElapsedTime();
+
+        final Thread high = new Thread() {
+            public void run() {
+                lift.up(2);
+                minicookies.pick.setPosition(0.38);
+                Blue.this.sleep(675);
+                minicookies.put();
+            }
+        };
+
+        final Thread down = new Thread() {
+            public void run() {
+                minicookies.take();
+                minicookies.pick.setPosition(0.2);
+                Blue.this.sleep(250);
+                lift.down();
+            }
+        };
+
+        final Thread mid = new Thread() {
+            public void run() {
+                lift.up(1);
+                minicookies.pick.setPosition(0.41);
+                Blue.this.sleep(250);
+                minicookies.put();
+            }
+        };
+
+        TrajectorySequence tr1 = drive.trajectorySequenceBuilder(new Pose2d(35.46, 63.70, Math.toRadians(-90.00)))
+                .splineTo(new Vector2d(34.87, 14.63), Math.toRadians(-88.73))
+                .splineToLinearHeading(new Pose2d(49.2, 15.2, Math.toRadians(38.00)), Math.toRadians(12.00))
+                .build();
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(tr1.end())
+                .splineToLinearHeading(new Pose2d(63.86, 15.23, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .build();
+
+        TrajectorySequence middle = drive.trajectorySequenceBuilder(tr1.end())
+                .splineToLinearHeading(new Pose2d(35.77, 13.05, Math.toRadians(0.00)), Math.toRadians(90.00))
+                .build();
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(tr1.end())
+                .lineToLinearHeading(new Pose2d(35.39, 8.54, Math.toRadians(0.00)))
+                .lineToLinearHeading(new Pose2d(11.17, 12.86, Math.toRadians(0.00)))
+                .build();
+
+
+        drive.setPoseEstimate(tr1.start());
 
         /*
          * The INIT-loop:
@@ -306,50 +241,500 @@ public class Blue extends LinearOpMode
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
             drive.followTrajectorySequence(tr1);
-            drive.followTrajectorySequence(tr2);
-            drive.followTrajectorySequence(tr3);
-            drive.followTrajectorySequence(tr4);
-            drive.followTrajectorySequence(tr5);
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 1.5) {
+                if (runtime.seconds() > 0.1 && runtime.seconds()<1) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 0.85 && runtime.seconds()<1.15){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds() > 1.15){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>1.45){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 3.5) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack5();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack4();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack3();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack2();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack1();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+            drive.followTrajectorySequence(left);
 
         }else if(tagOfInterest.id == MIDDLE){
             drive.followTrajectorySequence(tr1);
-            drive.followTrajectorySequence(tr2);
-            drive.followTrajectorySequence(tr3);
-            drive.followTrajectorySequence(tr4);
-            drive.followTrajectorySequence(tr5);
-            drive.followTrajectorySequence(trmid);
 
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 1.5) {
+                if (runtime.seconds() > 0.1 && runtime.seconds()<1) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 0.85 && runtime.seconds()<1.15){
+                    minicookies.put();
+                }
 
+                if(runtime.seconds() > 1.15){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>1.45){
+                    lift.down();
+                }
 
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 3.5) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack5();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack4();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack3();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack2();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack1();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            drive.followTrajectorySequence(middle);
         }else if(tagOfInterest.id == RIGHT){
             drive.followTrajectorySequence(tr1);
-            drive.followTrajectorySequence(tr2);
-            drive.followTrajectorySequence(tr3);
-            drive.followTrajectorySequence(tr4);
-            drive.followTrajectorySequence(tr5);
-            drive.followTrajectorySequence(trright);
 
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 1.5) {
+                if (runtime.seconds() > 0.1 && runtime.seconds()<1) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 0.85 && runtime.seconds()<1.15){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds() > 1.15){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>1.45){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 3.5) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack5();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack4();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack3();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack2();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+
+            runtime.reset();
+            while (opModeIsActive() && runtime.seconds() < 4) {
+                if(runtime.seconds() > 0.1 && runtime.seconds() < 0.3) {
+                    minicookies.stack1();
+                }
+                if (runtime.seconds() > 0.5 && runtime.seconds() < 0.7) {
+                    minicookies.load();
+                }
+
+                if (runtime.seconds() > 1.5 && runtime.seconds()<3) {
+                    lift.up(2);
+                    minicookies.pick.setPosition(0.38);
+                }
+                if(runtime.seconds() > 2.2&&runtime.seconds()<3){
+                    minicookies.put();
+                }
+
+                if(runtime.seconds()>3){
+                    minicookies.take();
+                    minicookies.pick.setPosition(0.2);
+                }
+                if(runtime.seconds()>3.2){
+                    lift.down();
+                }
+
+                lift.update();
+            }
+            drive.followTrajectorySequence(right);
         }
-
     }
-    public void seq1() {
-        lift.up(1);
-        sv.update_servo(0.78);
-        seqtime.reset();
-        while(seqtime.seconds() < 1) {
-            if(seqtime.seconds() > 0.45) {
-                sv.openup();
-            }
-            if(seqtime.seconds() > 0.8){
-                sv.update_servo(0.67);
-            }
-            if(seqtime.seconds() > 0.95){
-                lift.down();
-            }
-            lift.update();
-        }
-    }
-
     void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));

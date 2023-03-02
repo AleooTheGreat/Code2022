@@ -26,7 +26,7 @@ import java.util.Objects;
 
 @Config
 @Autonomous(group = "drive")
-@Disabled
+
 public class MaxAngularVeloTuner extends LinearOpMode {
     public static double RUNTIME = 4.0;
 
@@ -36,7 +36,7 @@ public class MaxAngularVeloTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        MiniCookies mini = new MiniCookies(hardwareMap);
+
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
