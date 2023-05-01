@@ -19,8 +19,10 @@ public class MiniCookies {
     public ServoImplEx posa = null;
     public ServoImplEx claw= null;
     public ServoImplEx pick = null;
-
     public DcMotorEx base = null;
+
+    public ServoImplEx arm1 = null;
+    public ServoImplEx arm2 = null;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -37,16 +39,22 @@ public class MiniCookies {
 
         pick = hardwareMap.get(ServoImplEx.class, "pick");
 
+        arm1 = hardwareMap.get(ServoImplEx.class, "arm1");
+        arm2 = hardwareMap.get(ServoImplEx.class, "arm2");
+
 
         base.setDirection(DcMotorEx.Direction.REVERSE);
         upr.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
         posa.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
+        arm1.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
         pick.setDirection(com.qualcomm.robotcore.hardware.ServoImplEx.Direction.REVERSE);
 
         base.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         base.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         base.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        pick.setPosition(0);
 
         poweroff();
 
@@ -57,6 +65,11 @@ public class MiniCookies {
 
     }
 
+    public void arm(double position){
+        arm1.setPosition(position);
+        arm2.setPosition(position);
+    }
+
     public void poweroff(){
 
 
@@ -65,17 +78,27 @@ public class MiniCookies {
 
         posa.setPwmDisable();
         claw.setPwmDisable();
+
+        arm1.setPwmDisable();
+        arm2.setPwmDisable();
     }
 
-    public void startoff(){
+    public void startoff() {
+        runtime.reset();
+        while (runtime.seconds() < 1){
+            posa.setPosition(0.54);
 
-        upl.setPosition(0.14);
-        upr.setPosition(0.14);
+            claw.setPosition(0.47);
+            pick.setPosition(0.489);
 
-        posa.setPosition(0.5);
+            arm1.setPosition(0.24);
+            arm2.setPosition(0.24);
+            if(runtime.seconds()<1.2) {
+                upl.setPosition(0.14);
+                upr.setPosition(0.14);
+            }
 
-        claw.setPosition(0.47);
-        pick.setPosition(0.1);
+        }
     }
 
     public void take(){
@@ -96,53 +119,73 @@ public class MiniCookies {
 
     public void close(){
 
-        claw.setPosition(0.75);
+        claw.setPosition(0.66);
 
     }
-
 
     public void down(){
-        posa.setPosition(0.5);
+
         open();
+
+        posa.setPosition(0.5);
+
+        arm1.setPosition(0.563);
+        arm2.setPosition(0.563);
+
     }
 
-
-    public void load() {
-
+    public void load(){
         close();
 
         runtime.reset();
 
-        while (runtime.seconds() < 1) {
-
-            if(runtime.seconds()> 0.15) {
+        while(runtime.seconds()<1.25){
+            if(runtime.seconds() > 0.25){
+                arm1.setPosition(0.1772);
+                arm2.setPosition(0.1772);
             }
+            if(runtime.seconds()>0.45){
+                posa.setPosition(0.243);
 
-
-            if (runtime.seconds() > 0.3) {
+            }
+            if(runtime.seconds()>0.75){
                 base.setTargetPosition(0);
                 base.setPower(1);
             }
 
-            if(runtime.seconds() > 0.4){
-                posa.setPosition(0.207);
+            if(runtime.seconds() > 1.20){
+                open();
             }
-
-            if (runtime.seconds() > 0.95) {
-
-                claw.setPosition(0.47);
-
-            }
-
         }
+       /* posa.setPosition(0.241);
+
+        arm1.setPosition(0.307);
+        arm2.setPosition(0.307);
+
+        */
     }
 
-    public void stack5(){
 
+
+
+    public void stack5(){
         open();
-        posa.setPosition(0.565);
-        base.setTargetPosition(-544);
-        base.setPower(1);
+        posa.setPosition(0.57);
+
+        runtime.reset();
+        while(runtime.seconds()<0.3){
+            if(runtime.seconds()>0.1){
+                base.setTargetPosition(-544);
+                base.setPower(1);
+            }
+        }
+
+
+
+        arm1.setPosition(0.488);
+        arm2.setPosition(0.488);
+
+
 
 
     }
@@ -150,19 +193,38 @@ public class MiniCookies {
     public void stack4(){
 
         open();
-        posa.setPosition(0.5594);
-        base.setTargetPosition(-541);
-        base.setPower(1);
+        posa.setPosition(0.5683);
 
+        runtime.reset();
+        while(runtime.seconds()<0.3){
+            if(runtime.seconds()>0.1){
+                base.setTargetPosition(-544);
+                base.setPower(1);
+            }
+        }
+
+
+        arm1.setPosition(0.502);
+        arm2.setPosition(0.502);
 
     }
 
     public void stack3(){
 
         open();
-        posa.setPosition(0.5011);
-        base.setTargetPosition(-544);
-        base.setPower(1);
+        posa.setPosition(0.5294);
+
+        runtime.reset();
+        while(runtime.seconds()<0.3){
+            if(runtime.seconds()>0.1){
+                base.setTargetPosition(-544);
+                base.setPower(1);
+            }
+        }
+
+        arm1.setPosition(0.5183);
+        arm2.setPosition(0.5183);
+
 
 
     }
@@ -170,62 +232,38 @@ public class MiniCookies {
     public void stack2(){
 
         open();
-        posa.setPosition(0.5);
-        base.setTargetPosition(-550);
-        base.setPower(1);
+        posa.setPosition(0.527);
+
+        runtime.reset();
+        while(runtime.seconds()<0.3){
+            if(runtime.seconds()>0.1){
+                base.setTargetPosition(-544);
+                base.setPower(1);
+            }
+        }
+        arm1.setPosition(0.542);
+        arm2.setPosition(0.542);
+
 
     }
 
     public void stack1(){
 
         open();
+
         posa.setPosition(0.5);
-        base.setTargetPosition(-550);
-        base.setPower(1);
-
-
-    }
-
-    public void waitforload(){
-        close();
 
         runtime.reset();
-
-        while (runtime.seconds() < 1) {
-
-            if (runtime.seconds() > 0.2) {
-
-
-
-            }
-
-            if(runtime.seconds() > 0.4){
-
-                posa.setPosition(0.235);
-
-
+        while(runtime.seconds()<0.3){
+            if(runtime.seconds()>0.1){
+                base.setTargetPosition(-544);
+                base.setPower(1);
             }
         }
-    }
 
-    public void afterload(){
+        arm1.setPosition(0.563);
+        arm2.setPosition(0.563);
 
-        runtime.reset();
-
-        while (runtime.seconds() < 1) {
-
-            if (runtime.seconds() > 0.2) {
-
-
-            }
-
-            if (runtime.seconds() > 0.55) {
-
-                claw.setPosition(0.47);
-
-            }
-
-        }
     }
 
 }

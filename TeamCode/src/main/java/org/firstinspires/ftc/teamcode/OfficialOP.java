@@ -57,10 +57,11 @@ public class OfficialOP extends LinearOpMode {
     int position = 0;
     double speedM = 0.85f;
     boolean up = false;
-
-    boolean adjust = false;
     boolean will = true;
     boolean ok_speed = false;
+
+    boolean highj = false;
+    boolean midj = false;
 
     @Override
     public void runOpMode() {
@@ -74,25 +75,36 @@ public class OfficialOP extends LinearOpMode {
         final Thread high = new Thread() {
             public void run() {
                 lift.up(2);
-                minicookies.pick.setPosition(0.38);
-                OfficialOP.this.sleep(675);
+                minicookies.pick.setPosition(0.660);
+                OfficialOP.this.sleep(750);
                 minicookies.put();
             }
         };
 
-        final Thread down = new Thread() {
+        final Thread down_mid = new Thread() {
             public void run() {
                 minicookies.take();
-                minicookies.pick.setPosition(0.2);
                 OfficialOP.this.sleep(250);
                 lift.down();
+                OfficialOP.this.sleep(250);
+                minicookies.pick.setPosition(0.56);
+            }
+        };
+
+        final Thread down_high = new Thread() {
+            public void run() {
+                minicookies.take();
+                OfficialOP.this.sleep(250);
+                lift.down();
+                OfficialOP.this.sleep(350);
+                minicookies.pick.setPosition(0.56);
             }
         };
 
         final Thread mid = new Thread() {
             public void run() {
                 lift.up(1);
-                minicookies.pick.setPosition(0.41);
+                minicookies.pick.setPosition(0.71);
                 OfficialOP.this.sleep(250);
                 minicookies.put();
             }
@@ -127,82 +139,91 @@ public class OfficialOP extends LinearOpMode {
                     -x * 0.3,
                     -rx * speedM));
 
-        //༼ つ ◕_◕ ༽つ🍪
-        //Gamepad2
+            //༼ つ ◕_◕ ༽つ🍪
+            //Gamepad2
 
 
-        if (gamepad2.left_bumper) {
-            minicookies.take();
+            if (gamepad2.left_bumper) {
+                minicookies.take();
+            }
+            if (gamepad2.right_bumper) {
+                minicookies.put();
+            }
+
+            if (gamepad2.dpad_right) {
+                position = last_position;
+                minicookies.down();
+                speedM = 0.9f;
+            }
+
+            if (gamepad2.cross) {
+                last_position = minicookies.base.getCurrentPosition();
+                position = 0;
+                minicookies.load();
+                speedM = 0.9f;
+            }
+
+
+            //Levels
+            if (gamepad2.dpad_down) {
+                if(midj) {
+                    midj = false;
+                    down_mid.start();
+                }else if(highj){
+                    highj = false;
+                    down_high.start();
+                }
+                speedM = 0.65f;
+            }
+
+            if (gamepad2.dpad_left) {
+                midj = true;
+                mid.start();
+                up = true;
+            }
+
+            if (gamepad2.dpad_up) {
+                highj = true;
+                high.start();
+                up = true;
+            }
+
+            if (gamepad2.circle) {
+                minicookies.close();
+            }
+
+            if(gamepad2.square){
+                minicookies.open();
+            }
+
+            if(gamepad2.triangle){
+                position = 0;
+            }
+
+            position += (int)(gamepad2.left_stick_x * 10);
+            minicookies.base.setTargetPosition(position);
+            minicookies.base.setPower(1);
+
+            minicookies.pick.setPosition(minicookies.pick.getPosition() + gamepad2.right_stick_x/100);
+            minicookies.arm(minicookies.arm1.getPosition() + gamepad2.left_stick_y/100);
+            minicookies.posa.setPosition(minicookies.posa.getPosition() + gamepad2.right_stick_y/100);
+
+            telemetry.addData("rotatie", minicookies.base.getCurrentPosition());
+             telemetry.addData("arm_pos", minicookies.arm1.getPosition());
+            telemetry.addData("arm_pos2", minicookies.arm2.getPosition());
+            telemetry.addData("pozarm", minicookies.posa.getPosition());
+            telemetry.addData("picki",minicookies.pick.getPosition());
+            telemetry.addData("lastpos",last_position);
+            telemetry.addData("pos",position);
+            telemetry.addData("will", will);
+            telemetry.addData("gl_st",lift.gl.getCurrentPosition());
+            telemetry.addData("gl_rg",lift.gr.getCurrentPosition());
+            telemetry.update();
+
+
+            lift.update();
+
+
         }
-        if (gamepad2.right_bumper) {
-            minicookies.put();
-        }
-
-        if (gamepad2.dpad_right) {
-           position = last_position;
-            minicookies.down();
-            speedM = 0.9f;
-        }
-
-        if (gamepad2.cross) {
-            last_position = minicookies.base.getCurrentPosition();
-            position = 0;
-            minicookies.load();
-            speedM = 0.6f;
-        }
-
-
-        //Levels
-        if (gamepad2.dpad_down) {
-            down.start();
-            speedM = 0.65f;
-        }
-
-        if (gamepad2.dpad_left) {
-
-            mid.start();
-            up = true;
-        }
-
-        if (gamepad2.dpad_up) {
-            high.start();
-            up = true;
-        }
-
-        if (gamepad2.circle) {
-           minicookies.close();
-        }
-
-        if(gamepad2.square){
-            minicookies.open();
-        }
-
-        if(gamepad2.triangle){
-           position = 0;
-        }
-
-        position += (int)(gamepad2.left_stick_x * 10);
-        minicookies.base.setTargetPosition(position);
-        minicookies.base.setPower(1);
-
-        minicookies.pick.setPosition(minicookies.pick.getPosition() + gamepad2.right_stick_x/100);
-       // minicookies.arm(minicookies.arm1.getPosition() + gamepad2.left_stick_y/100);
-        minicookies.posa.setPosition(minicookies.posa.getPosition() + gamepad2.right_stick_y/100);
-
-       telemetry.addData("rotatie", minicookies.base.getCurrentPosition());
-      // telemetry.addData("arm_pos", minicookies.arm1.getPosition());
-      // telemetry.addData("arm_pos2", minicookies.arm2.getPosition());
-       telemetry.addData("pozarm", minicookies.posa.getPosition());
-       telemetry.addData("lastpos",last_position);
-       telemetry.addData("pos",position);
-       telemetry.addData("will", will);
-       telemetry.update();
-
-
-        lift.update();
-
-
     }
-        }
-    }
-
+}

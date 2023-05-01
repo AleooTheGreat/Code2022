@@ -29,6 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,16 +40,27 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.classes.Arm;
+import org.firstinspires.ftc.teamcode.classes.MiniCookies;
 
 
 @TeleOp(name="Arm", group="Iterative Opmode")
+@Config
 public class Test_Arm extends OpMode
 {
 
-    Arm arm ;
+   // Arm arm ;
+    MiniCookies mini;
+
+   // public static double position = 0.285;
+    public static double otherposition = 0.47;
     @Override
     public void init() {
-        arm = new Arm(hardwareMap);
+       // arm = new Arm(hardwareMap);
+        mini = new MiniCookies(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        mini.pick.setPosition(0.5);
+        mini.arm1.setPosition(0.23);
+        mini.arm2.setPosition(0.23);
     }
 
     @Override
@@ -63,7 +77,46 @@ public class Test_Arm extends OpMode
 
     @Override
     public void loop() {
-      arm.update();
+
+        if(gamepad2.circle){
+            mini.open();
+        }
+
+        if(gamepad2.square){
+            mini.close();
+        }
+
+        if(gamepad2.cross){
+            mini.arm1.setPosition(0.23);
+            mini.arm2.setPosition(0.23);
+        }
+
+        if(gamepad2.triangle){
+            mini.arm1.setPosition(0.65);
+            mini.arm2.setPosition(0.65);
+        }
+
+        if(gamepad2.right_bumper){
+            mini.upl.setPosition(0.74);
+            mini.upr.setPosition(0.74);
+        }
+
+        if(gamepad2.left_bumper){
+            mini.upl.setPosition(0.14);
+            mini.upr.setPosition(0.14);
+        }
+
+        mini.arm1.setPosition(mini.arm1.getPosition() + gamepad2.left_stick_y/100);
+        mini.arm2.setPosition(mini.arm2.getPosition() + gamepad2.left_stick_y/100);
+        mini.pick.setPosition(mini.pick.getPosition() + gamepad2.right_stick_y/100);
+
+   //     mini.pick.setPosition(position);
+    //    mini.claw.setPosition(otherposition);
+
+        telemetry.addData("arm1",mini.arm1.getPosition()) ;
+        telemetry.addData("arm2", mini.arm2.getPosition());
+        telemetry.addData("posarm",mini.posa.getPosition());
+        telemetry.update();
     }
 
 

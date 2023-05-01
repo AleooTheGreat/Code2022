@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.classes.Arm;
 import org.firstinspires.ftc.teamcode.classes.GetCookies;
 import org.firstinspires.ftc.teamcode.classes.MiniCookies;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -42,7 +43,7 @@ import java.util.ArrayList;
 @Autonomous
 public class Red extends LinearOpMode
 {
-    OpenCvCamera camera;
+   OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
@@ -62,92 +63,130 @@ public class Red extends LinearOpMode
     int LEFT = 0;
     int MIDDLE = 4;
     int RIGHT = 2;
+
+
     AprilTagDetection tagOfInterest = null;
 
-    SampleMecanumDrive drive ;
-    GetCookies lift;
-    MiniCookies sv;
-    ElapsedTime seqtime = new ElapsedTime();
+    SampleMecanumDrive drive;
+    MiniCookies minicookies;
+    GetCookies lift ;
+    Arm arm ;
+    ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime start = new ElapsedTime();
+
 
     @Override
-    public void runOpMode() {
+    public void runOpMode()
+    {
+
 
         drive = new SampleMecanumDrive(hardwareMap);
+        minicookies = new MiniCookies(hardwareMap);
         lift = new GetCookies(hardwareMap);
-        sv = new MiniCookies(hardwareMap);
+        arm = new Arm(hardwareMap);
+
+
+
+        TrajectorySequence tr1 = drive.trajectorySequenceBuilder(new Pose2d(-35.81, -63.85, Math.toRadians(90.00)))
+                .lineTo(new Vector2d(-35.42, -13.94))
+                .build();
+
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(tr1.end())
+                .lineTo(new Vector2d(-61.60, -12.95))
+                .build();
+        TrajectorySequence right = drive.trajectorySequenceBuilder(tr1.end())
+                .lineTo(new Vector2d(-12.74, -12.54))
+                .build();
+
+
+
+
+
+        drive.setPoseEstimate(tr1.start());
+
+
+
+
+
+
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
             @Override
-            public void onOpened() {
-                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {
+            public void onError(int errorCode)
+            {
 
             }
         });
 
         telemetry.setMsTransmissionInterval(50);
 
-        TrajectorySequence mid = drive.trajectorySequenceBuilder(new Pose2d(-37.33, -60.25, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-36.19, -20.65), Math.toRadians(90.70))
-                .build();
-
-        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-37.33, -60.25, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-35.43, -15.73), Math.toRadians(90.70))
-                .splineTo(new Vector2d(-12.51, -14.02), Math.toRadians(4.25))
-                .build();
-
-        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-37.33, -60.25, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-35.43, -15.73), Math.toRadians(90.70))
-                .splineTo(new Vector2d(-60.82, -14.21), Math.toRadians(171.75))
-                .build();
-
 
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!isStarted() && !isStopRequested()) {
+        while (!isStarted() && !isStopRequested())
+        {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if (currentDetections.size() != 0) {
+            if(currentDetections.size() != 0)
+            {
                 boolean tagFound = false;
 
-                for (AprilTagDetection tag : currentDetections) {
-                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+                for(AprilTagDetection tag : currentDetections)
+                {
+                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
+                    {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
-                if (tagFound) {
+                if(tagFound)
+                {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
-                } else {
+                }
+                else
+                {
                     telemetry.addLine("Don't see tag of interest :(");
 
-                    if (tagOfInterest == null) {
+                    if(tagOfInterest == null)
+                    {
                         telemetry.addLine("(The tag has never been seen)");
-                    } else {
+                    }
+                    else
+                    {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
                 }
 
-            } else {
+            }
+            else
+            {
                 telemetry.addLine("Don't see tag of interest :(");
 
-                if (tagOfInterest == null) {
+                if(tagOfInterest == null)
+                {
                     telemetry.addLine("(The tag has never been seen)");
-                } else {
+                }
+                else
+                {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
@@ -164,23 +203,28 @@ public class Red extends LinearOpMode
          */
 
         /* Update the telemetry */
-        if (tagOfInterest != null) {
+        if(tagOfInterest != null)
+        {
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
             telemetry.update();
-        } else {
+        }
+        else
+        {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
 
         /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+        if(tagOfInterest == null || tagOfInterest.id == LEFT){
+                drive.followTrajectorySequence(tr1);
+                drive.followTrajectorySequence(left);
+        }else if(tagOfInterest.id == MIDDLE){
+drive.followTrajectorySequence(tr1);
+            } else if (tagOfInterest.id == RIGHT) {
+            drive.followTrajectorySequence(tr1);
+            drive.followTrajectorySequence(right);
 
-            drive.followTrajectorySequence(left);
-        } else if (tagOfInterest.id == MIDDLE) {
- drive.followTrajectorySequence(mid);
-        } else if (tagOfInterest.id == RIGHT) {
-drive.followTrajectorySequence(right);
         }
 
     }
@@ -190,7 +234,7 @@ drive.followTrajectorySequence(right);
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Trans  lation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));

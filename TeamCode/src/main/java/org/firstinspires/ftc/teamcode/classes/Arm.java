@@ -18,19 +18,23 @@ public class Arm {
 
     private PIDController controller;
 
-    public static double maxPIDPower = 0.5;
-    public static double kP = 0.003;
+    public static double maxPIDPower = 1;
+    public static double kP = 0.00174;
     public static double kI = 0;
-    public static double kD = 0.0004;
-    public static double kF = 0.004;
 
-    public static double setpoint = 0;
+    public static double kD = 0.00035;
+    public static double kF = 0.003;
+    public static int offset = 460;
 
-    double ticks_in_degrees = 145.1 / 360;
+    public static double setpoint_arm = 0;
+
+    public double  ticks_in_degrees = 1153.6193 / 360;
+
+    boolean ok = false;
 
     public Arm(HardwareMap hardwareMap) {
 
-        setpoint = 0;
+        setpoint_arm = 0;
 
         arm = hardwareMap.get(DcMotorEx.class, "arm");
 
@@ -53,14 +57,40 @@ public class Arm {
 
             controller.setPID(kP, kI, kD);
             int armPos = arm.getCurrentPosition();
-            double pid = Math.min(controller.calculate(armPos, setpoint), maxPIDPower);
-            double ffl = Math.cos(Math.toRadians(setpoint / ticks_in_degrees)) * kF;
+            double pid = Math.min(controller.calculate(armPos, setpoint_arm), maxPIDPower);
+             double ffl = Math.cos(Math.toRadians((setpoint_arm - offset) / ticks_in_degrees)) * -kF;
 
             double power = pid + ffl;
 
             arm.setPower(power);
 
 
+    }
+
+    public void modify(){
+        offset = 0;
+        ok = true;
+    }
+
+    public void up_arm(){
+
+        if(ok){
+            setpoint_arm = -345;
+        }else{
+            setpoint_arm = 115;
+        }
+    }
+
+    public void down_arm(){
+        if(ok){
+            setpoint_arm = 15;
+        }else {
+            setpoint_arm = 475;
+        }
+    }
+
+    public void up_arm_to_pos(int postion){
+        setpoint_arm = postion;
     }
 
 
